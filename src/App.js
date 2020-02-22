@@ -3,6 +3,8 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import LoginForm from './components/LoginForm'
+import Notification from './components/Notification'
+import Error from './components/Error'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -12,6 +14,8 @@ const App = () => {
   const [newBlogTitle, setNewBlogTitle] = useState('')
   const [newBlogAuthor, setNewBlogAuthor] = useState('')
   const [newBlogUrl, setNewBlogUrl] = useState('')
+  const [message, setMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
     blogService.getAll().then(blogs => {
@@ -29,6 +33,20 @@ const App = () => {
     }
   }, [])
 
+  const doMessaging = (text) => {
+    setMessage(text)
+    setTimeout(() => {
+      setMessage(null)
+    }, 1000)
+  }
+
+  const doErroring = (text) => {
+    setErrorMessage(text)
+    setTimeout(() => {
+      setErrorMessage(null)
+    }, 1000)
+  }
+
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
@@ -44,27 +62,33 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
-    } catch (exception) {
-      console.log('issues')
+    } catch (error) {
+      console.log('fail')
+      doErroring(`Incorrect credentials.`)
     }
   }
 
 
-  const addBlog = (event) => {
+  const addBlog = async (event) => {
     event.preventDefault()
-    const blogObject = { title: newBlogTitle, 
-      author: newBlogAuthor, 
+    const blogObject = {
+      title: newBlogTitle,
+      author: newBlogAuthor,
       url: newBlogUrl
     }
 
-    blogService
-      .create(blogObject)
-      .then(returned => {
-        setBlogs(blogs.concat(returned))
-        setNewBlogAuthor('')
-        setNewBlogTitle('')
-        setNewBlogUrl('')
-      })
+    try {
+      const returned = await blogService.create(blogObject)
+      setBlogs(blogs.concat(returned))
+      doMessaging(`Successfully added new blog: ${blogObject.title} by ${blogObject.author}`)
+      setNewBlogAuthor('')
+      setNewBlogTitle('')
+      setNewBlogUrl('')
+    } catch (error) {
+      console.log('fail')
+      doErroring(`Could not add new blog.`)
+    }
+
   }
 
 
@@ -80,9 +104,9 @@ const App = () => {
 
   const blogForm = () => (
     <form onSubmit={addBlog}>
-      <div>title: <input value={newBlogTitle} onChange={handleBlogTitleChange}  /></div>
-      <div>author: <input value={newBlogAuthor} onChange={handleBlogAuthorChange}/></div>
-      <div>url: <input value={newBlogUrl} onChange={handleBlogUrlChange}/></div>
+      <div>title: <input value={newBlogTitle} onChange={handleBlogTitleChange} /></div>
+      <div>author: <input value={newBlogAuthor} onChange={handleBlogAuthorChange} /></div>
+      <div>url: <input value={newBlogUrl} onChange={handleBlogUrlChange} /></div>
       <div><button type="submit">save</button></div>
     </form>
   )
@@ -103,13 +127,14 @@ const App = () => {
 
   return (
     <div>
-
+      <Notification message={message} />
+      <Error message={errorMessage} />
       {user === null ?
-        <LoginForm handleLogin={handleLogin} 
-        username={username} 
-        password={password}
-        setUsername={setUsername}
-        setPassword={setPassword}/> :
+        <LoginForm handleLogin={handleLogin}
+          username={username}
+          password={password}
+          setUsername={setUsername}
+          setPassword={setPassword} /> :
         <div>
           <h2>blogs</h2>
           <h2>create new</h2>
