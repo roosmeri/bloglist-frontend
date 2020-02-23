@@ -13,9 +13,6 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [newBlogTitle, setNewBlogTitle] = useState('')
-  const [newBlogAuthor, setNewBlogAuthor] = useState('')
-  const [newBlogUrl, setNewBlogUrl] = useState('')
   const [message, setMessage] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
   const [visible, setVisible] = useState(false)
@@ -24,7 +21,7 @@ const App = () => {
   const showWhenVisible = { display: visible ? '' : 'none' }
 
   const toggleVisibility = () => {
-      setVisible(!visible)
+    setVisible(!visible)
   }
 
   useEffect(() => {
@@ -79,42 +76,11 @@ const App = () => {
   }
 
 
-  const addBlog = async (event) => {
-    event.preventDefault()
-    const blogObject = {
-      title: newBlogTitle,
-      author: newBlogAuthor,
-      url: newBlogUrl
-    }
-
-    try {
-      const returned = await blogService.create(blogObject)
-      setBlogs(blogs.concat(returned))
-      doMessaging(`Successfully added new blog: ${blogObject.title} by ${blogObject.author}`)
-      setNewBlogAuthor('')
-      setNewBlogTitle('')
-      setNewBlogUrl('')
-    } catch (error) {
-      console.log('fail')
-      doErroring(`Could not add new blog.`)
-    }
-
-  }
-
   const handleUsernameChange = (event) => {
     setUsername(event.target.value)
   }
   const handlePasswordChange = (event) => {
     setPassword(event.target.value)
-  }
-  const handleBlogTitleChange = (event) => {
-    setNewBlogTitle(event.target.value)
-  }
-  const handleBlogAuthorChange = (event) => {
-    setNewBlogAuthor(event.target.value)
-  }
-  const handleBlogUrlChange = (event) => {
-    setNewBlogUrl(event.target.value)
   }
 
   const blogsDiv = () => {
@@ -131,6 +97,17 @@ const App = () => {
     setUser(null)
   }
 
+  const createBlog = async (blogObject) => {
+    try {
+      const returned = await blogService.create(blogObject)
+      setBlogs(blogs.concat(returned))
+      doMessaging(`Successfully added new blog: ${blogObject.title} by ${blogObject.author}`)
+    } catch (error) {
+      console.log('fail')
+      doErroring(`Could not add new blog.`)
+    }
+  }
+
   return (
     <div>
       <Notification message={message} />
@@ -145,21 +122,15 @@ const App = () => {
         <div>
           <h2>blogs</h2>
 
-          <Togglable 
-          buttonLabel='new blog'
-          toggleVisibility={toggleVisibility}
-          hideWhenVisible={hideWhenVisible}
-          showWhenVisible={showWhenVisible}
+          <Togglable
+            buttonLabel='new blog'
+            toggleVisibility={toggleVisibility}
+            hideWhenVisible={hideWhenVisible}
+            showWhenVisible={showWhenVisible}
           >
             <h2>create new</h2>
-            <BlogForm newBlogAuthor={newBlogAuthor}
-              newBlogTitle={newBlogTitle}
-              newBlogUrl={newBlogUrl}
-              handleBlogAuthorChange={handleBlogAuthorChange}
-              handleBlogTitleChange={handleBlogTitleChange}
-              handleBlogUrlChange={handleBlogUrlChange}
-              onSubmit={addBlog} 
-              toggleVisibility={toggleVisibility}/>
+            <BlogForm createBlog={createBlog}
+              toggleVisibility={toggleVisibility} />
           </Togglable>
           <p>{user.name} logged in <button onClick={handleLogout}>Logout</button></p>
           {blogsDiv()}
