@@ -5,6 +5,8 @@ import loginService from './services/login'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
 import Error from './components/Error'
+import Togglable from './components/Togglable'
+import BlogForm from './components/BlogForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -16,6 +18,14 @@ const App = () => {
   const [newBlogUrl, setNewBlogUrl] = useState('')
   const [message, setMessage] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
+  const [visible, setVisible] = useState(false)
+
+  const hideWhenVisible = { display: visible ? 'none' : '' }
+  const showWhenVisible = { display: visible ? '' : 'none' }
+
+  const toggleVisibility = () => {
+      setVisible(!visible)
+  }
 
   useEffect(() => {
     blogService.getAll().then(blogs => {
@@ -91,7 +101,12 @@ const App = () => {
 
   }
 
-
+  const handleUsernameChange = (event) => {
+    setUsername(event.target.value)
+  }
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value)
+  }
   const handleBlogTitleChange = (event) => {
     setNewBlogTitle(event.target.value)
   }
@@ -101,15 +116,6 @@ const App = () => {
   const handleBlogUrlChange = (event) => {
     setNewBlogUrl(event.target.value)
   }
-
-  const blogForm = () => (
-    <form onSubmit={addBlog}>
-      <div>title: <input value={newBlogTitle} onChange={handleBlogTitleChange} /></div>
-      <div>author: <input value={newBlogAuthor} onChange={handleBlogAuthorChange} /></div>
-      <div>url: <input value={newBlogUrl} onChange={handleBlogUrlChange} /></div>
-      <div><button type="submit">save</button></div>
-    </form>
-  )
 
   const blogsDiv = () => {
     return (
@@ -133,12 +139,28 @@ const App = () => {
         <LoginForm handleLogin={handleLogin}
           username={username}
           password={password}
-          setUsername={setUsername}
-          setPassword={setPassword} /> :
+          handleUsernameChange={handleUsernameChange}
+          handlePasswordChange={handlePasswordChange} />
+        :
         <div>
           <h2>blogs</h2>
-          <h2>create new</h2>
-          {blogForm()}
+
+          <Togglable 
+          buttonLabel='new blog'
+          toggleVisibility={toggleVisibility}
+          hideWhenVisible={hideWhenVisible}
+          showWhenVisible={showWhenVisible}
+          >
+            <h2>create new</h2>
+            <BlogForm newBlogAuthor={newBlogAuthor}
+              newBlogTitle={newBlogTitle}
+              newBlogUrl={newBlogUrl}
+              handleBlogAuthorChange={handleBlogAuthorChange}
+              handleBlogTitleChange={handleBlogTitleChange}
+              handleBlogUrlChange={handleBlogUrlChange}
+              onSubmit={addBlog} 
+              toggleVisibility={toggleVisibility}/>
+          </Togglable>
           <p>{user.name} logged in <button onClick={handleLogout}>Logout</button></p>
           {blogsDiv()}
         </div>
