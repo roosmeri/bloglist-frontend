@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, likeBlog }) => {
     const [showAll, setShowAll] = useState(false)
 
     const toggleView = () => {
@@ -16,9 +16,21 @@ const Blog = ({ blog }) => {
             <div>
                 <div>{blog.title} {blog.author}</div>
                 <div>{blog.url}</div>
-                <div>{blog.likes}<button>like</button></div>
+                <div>{blog.likes}<button onClick={like}>like</button></div>
             </div>
         )
+    }
+
+    const like = (event) => {
+        const blogObject = {
+            user: blog.user.id,
+            title: blog.title,
+            author: blog.author,
+            url: blog.url,
+            likes: blog.likes + 1
+        }
+        
+        likeBlog(blog.id,blogObject)
     }
 
     const blogStyle = {

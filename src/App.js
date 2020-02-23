@@ -87,7 +87,7 @@ const App = () => {
     return (
       <div>
         {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} />
+          <Blog key={blog.id} blog={blog} likeBlog={likeBlog} />
         )}
       </div>)
   }
@@ -105,6 +105,16 @@ const App = () => {
     } catch (error) {
       console.log('fail')
       doErroring(`Could not add new blog.`)
+    }
+  }
+
+  const likeBlog = async (id, blogObject) => {
+    try {
+      await blogService.update(id, blogObject)
+      doMessaging(`Successfully liked blog: ${blogObject.title} by ${blogObject.author}`)
+      setBlogs(await blogService.getAll())
+    } catch (error) {
+      doErroring(`Could not like blog.`)
     }
   }
 
