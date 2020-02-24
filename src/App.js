@@ -26,7 +26,7 @@ const App = () => {
 
   useEffect(() => {
     blogService.getAll().then(blogs => {
-      setBlogs(blogs)
+      setBlogs(blogs.sort(function (a, b) { return b.likes - a.likes }))
     }
     )
   }, [])
@@ -100,7 +100,9 @@ const App = () => {
   const createBlog = async (blogObject) => {
     try {
       const returned = await blogService.create(blogObject)
-      setBlogs(blogs.concat(returned))
+      setBlogs(blogs
+        .concat(returned)
+        .sort(function (a, b) { return b.likes - a.likes }))
       doMessaging(`Successfully added new blog: ${blogObject.title} by ${blogObject.author}`)
     } catch (error) {
       console.log('fail')
@@ -112,7 +114,8 @@ const App = () => {
     try {
       await blogService.update(id, blogObject)
       doMessaging(`Successfully liked blog: ${blogObject.title} by ${blogObject.author}`)
-      setBlogs(await blogService.getAll())
+      const allBlogs = await blogService.getAll()
+      setBlogs(allBlogs.sort(function (a, b) { return b.likes - a.likes }))
     } catch (error) {
       doErroring(`Could not like blog.`)
     }
