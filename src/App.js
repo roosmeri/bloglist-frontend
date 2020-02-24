@@ -71,7 +71,7 @@ const App = () => {
       setPassword('')
     } catch (error) {
       console.log('fail')
-      doErroring(`Incorrect credentials.`)
+      doErroring('Incorrect credentials.')
     }
   }
 
@@ -106,7 +106,7 @@ const App = () => {
       doMessaging(`Successfully added new blog: ${blogObject.title} by ${blogObject.author}`)
     } catch (error) {
       console.log('fail')
-      doErroring(`Could not add new blog.`)
+      doErroring('Could not add new blog.')
     }
   }
 
@@ -115,10 +115,10 @@ const App = () => {
       const removed = await blogService.remove(id)
       console.log(removed)
       setBlogs(blogs.filter(blog => removed.id !== (blog.id)))
-      doMessaging(`Removed blog successfully.`)
+      doMessaging('Removed blog successfully.')
     } catch (error) {
       console.log('fail')
-      doErroring(`Could not remove blog.`)
+      doErroring('Could not remove blog.')
     }
   }
 
@@ -129,7 +129,7 @@ const App = () => {
       const allBlogs = await blogService.getAll()
       setBlogs(allBlogs.sort(function (a, b) { return b.likes - a.likes }))
     } catch (error) {
-      doErroring(`Could not like blog.`)
+      doErroring('Could not like blog.')
     }
   }
 
