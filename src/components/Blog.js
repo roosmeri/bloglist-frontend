@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-const Blog = ({ blog, likeBlog }) => {
+const Blog = ({ user, blog, likeBlog, deleteBlog }) => {
     const [showAll, setShowAll] = useState(false)
 
     const toggleView = () => {
@@ -11,12 +11,23 @@ const Blog = ({ blog, likeBlog }) => {
         return (<div>{blog.title} {blog.author}</div>)
     }
 
+    const removeButton = () => {
+        if (user.username === blog.user.username) {
+            return (
+                <div>
+                    <button onClick={remove}>remove</button>
+                </div>
+            )
+        }
+    }
+
     const allView = () => {
         return (
             <div>
                 <div>{blog.title} {blog.author}</div>
                 <div>{blog.url}</div>
                 <div>{blog.likes}<button onClick={like}>like</button></div>
+                {removeButton()}
             </div>
         )
     }
@@ -29,8 +40,14 @@ const Blog = ({ blog, likeBlog }) => {
             url: blog.url,
             likes: blog.likes + 1
         }
-        
-        likeBlog(blog.id,blogObject)
+
+        likeBlog(blog.id, blogObject)
+    }
+
+    const remove = (event) => {
+        window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)
+
+        deleteBlog(blog.id)
     }
 
     const blogStyle = {

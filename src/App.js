@@ -87,7 +87,7 @@ const App = () => {
     return (
       <div>
         {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} likeBlog={likeBlog} />
+          <Blog key={blog.id} user={user} blog={blog} likeBlog={likeBlog} deleteBlog={deleteBlog} />
         )}
       </div>)
   }
@@ -107,6 +107,18 @@ const App = () => {
     } catch (error) {
       console.log('fail')
       doErroring(`Could not add new blog.`)
+    }
+  }
+
+  const deleteBlog = async (id) => {
+    try {
+      const removed = await blogService.remove(id)
+      console.log(removed)
+      setBlogs(blogs.filter(blog => removed.id !== (blog.id)))
+      doMessaging(`Removed blog successfully.`)
+    } catch (error) {
+      console.log('fail')
+      doErroring(`Could not remove blog.`)
     }
   }
 
