@@ -4,21 +4,11 @@ const Blog = ({ user, blog, likeBlog, deleteBlog }) => {
   const [showAll, setShowAll] = useState(false)
 
   const toggleView = () => {
-    setShowAll(!showAll)
+    setShowAll(!showAll)    
   }
 
   const shortView = () => {
     return (<div>{blog.title} {blog.author}</div>)
-  }
-
-  const removeButton = () => {
-    if (user.username === blog.user.username) {
-      return (
-        <div>
-          <button onClick={remove}>remove</button>
-        </div>
-      )
-    }
   }
 
   const allView = () => {
@@ -27,7 +17,9 @@ const Blog = ({ user, blog, likeBlog, deleteBlog }) => {
         <div>{blog.title} {blog.author}</div>
         <div>{blog.url}</div>
         <div>{blog.likes}<button onClick={like}>like</button></div>
-        {removeButton()}
+        {user.username === blog.user.username ? <div>
+          <button onClick={remove}>remove</button>
+        </div> : <div></div>}
       </div>
     )
   }

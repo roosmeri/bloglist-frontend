@@ -105,19 +105,18 @@ const App = () => {
         .sort(function (a, b) { return b.likes - a.likes }))
       doMessaging(`Successfully added new blog: ${blogObject.title} by ${blogObject.author}`)
     } catch (error) {
-      console.log('fail')
+      console.log(error)
       doErroring('Could not add new blog.')
     }
   }
 
   const deleteBlog = async (id) => {
     try {
-      const removed = await blogService.remove(id)
-      console.log(removed)
-      setBlogs(blogs.filter(blog => removed.id !== (blog.id)))
+      await blogService.remove(id)
+      setBlogs(blogs.filter(blog => id.toString() !== blog.id.toString()))
       doMessaging('Removed blog successfully.')
     } catch (error) {
-      console.log('fail')
+      console.log(error)
       doErroring('Could not remove blog.')
     }
   }

@@ -2,7 +2,7 @@ describe('Blog app', function () {
   beforeEach(function () {
     cy.request('POST', 'http://localhost:3001/api/testing/reset')
     cy.visit('http://localhost:3000')
-    cy.request('POST', 'http://localhost:3001/api/users',{username:'user1',name:'Roosa',password:'superstrong'})
+    cy.request('POST', 'http://localhost:3001/api/users', { username: 'user1', name: 'Roosa', password: 'superstrong' })
   })
 
   it('Login form is shown', function () {
@@ -32,14 +32,14 @@ describe('Blog app', function () {
     })
   })
 
-  describe.only('When logged in', function() {
-    beforeEach(function() {
+  describe.only('When logged in', function () {
+    beforeEach(function () {
       cy.get('#username').type('user1')
       cy.get('#password').type('superstrong')
-      cy.get('#login-button').click()    
+      cy.get('#login-button').click()
     })
 
-    it('A blog can be created', function() {
+    it('A blog can be created', function () {
       cy.contains('new blog').click()
       cy.get('#author').type('Super Writer')
       cy.get('#title').type('Important Title')
@@ -48,7 +48,7 @@ describe('Blog app', function () {
       cy.contains('Important Title')
     })
 
-    it('A blog can be liked', function() {
+    it('A blog can be liked', function () {
       cy.contains('new blog').click()
       cy.get('#author').type('Super Writer')
       cy.get('#title').type('Important Title')
@@ -58,6 +58,21 @@ describe('Blog app', function () {
       cy.contains('view').click()
       cy.contains('like').click()
       cy.contains('1')
+    })
+
+
+    it('A blog can be deleted', function () {
+      cy.contains('new blog').click()
+      cy.get('#author').type('Super Writer')
+      cy.get('#title').type('Important Title')
+      cy.get('#url').type('www.url.com')
+      cy.contains('save').click()
+      cy.visit('http://localhost:3000')
+      cy.contains('Important Title')
+      cy.contains('view').click()
+      cy.contains('remove').click()
+      cy.contains('Important Title')
+
     })
   })
 })
