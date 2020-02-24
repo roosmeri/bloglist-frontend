@@ -18,7 +18,7 @@ module.exports = {
         }
     },
     "plugins": [
-        "react"
+        "react",'jest'
     ],
     "ignorePatterns": ["build/", "node_modules/"],
     'rules': {

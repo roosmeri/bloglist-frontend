@@ -57,7 +57,7 @@ const Blog = ({ user, blog, likeBlog, deleteBlog }) => {
     borderWidth: 1,
     marginBottom: 5
   }
-  return (<div style={blogStyle}>
+  return (<div className='blog' style={blogStyle}>
     {showAll ?
       allView()
       :
