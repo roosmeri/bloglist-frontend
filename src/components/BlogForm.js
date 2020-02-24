@@ -34,11 +34,11 @@ const BlogForm = ({
 
   return (
     <form onSubmit={addBlog}>
-      <div>title: <input value={newBlogTitle} onChange={handleBlogTitleChange} /></div>
-      <div>author: <input value={newBlogAuthor} onChange={handleBlogAuthorChange} /></div>
-      <div>url: <input value={newBlogUrl} onChange={handleBlogUrlChange} /></div>
+      <div>title: <input id='title' value={newBlogTitle} onChange={handleBlogTitleChange} /></div>
+      <div>author: <input id='author' value={newBlogAuthor} onChange={handleBlogAuthorChange} /></div>
+      <div>url: <input id='url' value={newBlogUrl} onChange={handleBlogUrlChange} /></div>
       <div>
-        <button onClick={toggleVisibility} type="submit">save</button>
+        <button id='submit' onClick={toggleVisibility} type="submit">save</button>
       </div>
     </form>
   )
