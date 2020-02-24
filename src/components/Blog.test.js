@@ -86,3 +86,35 @@ test('view shows all fields', () => {
     '11'
   )
 })
+
+
+test('two likes cause two calls', () => {
+  const blog = {
+    title: 'This is a title',
+    author: 'Very Good',
+    url: 'www.osoite.com',
+    likes: 11,
+    user: 1
+  }
+
+  const user = {
+    username: 'user0',
+    name: 'Name McNamey',
+    id: '5'
+  }
+
+  const mockHandler = jest.fn()
+
+  const component = render(
+    <Blog user={user} blog={blog} likeBlog={mockHandler} deleteBlog={mockHandler}/>
+  )
+
+  const button = component.getByText('view')
+  fireEvent.click(button)
+  const likeButton = component.getByText('like')
+  fireEvent.click(likeButton)
+  fireEvent.click(likeButton)
+  
+
+  expect(mockHandler.mock.calls.length).toBe(2)
+})
