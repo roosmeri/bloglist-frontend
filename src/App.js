@@ -4,18 +4,18 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
-import Error from './components/Error'
 import Togglable from './components/Togglable'
 import BlogForm from './components/BlogForm'
+import { createNotification } from './reducers/notificationReducer'
+import { useDispatch } from 'react-redux'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [message, setMessage] = useState(null)
-  const [errorMessage, setErrorMessage] = useState(null)
   const [visible, setVisible] = useState(false)
+  const dispatch = useDispatch()
 
   const hideWhenVisible = { display: visible ? 'none' : '' }
   const showWhenVisible = { display: visible ? '' : 'none' }
@@ -40,20 +40,6 @@ const App = () => {
     }
   }, [])
 
-  const doMessaging = (text) => {
-    setMessage(text)
-    setTimeout(() => {
-      setMessage(null)
-    }, 1000)
-  }
-
-  const doErroring = (text) => {
-    setErrorMessage(text)
-    setTimeout(() => {
-      setErrorMessage(null)
-    }, 1000)
-  }
-
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
@@ -71,7 +57,7 @@ const App = () => {
       setPassword('')
     } catch (error) {
       console.log('fail')
-      doErroring('Incorrect credentials.')
+      dispatch(createNotification('Incorrect credentials.', 5))
     }
   }
 
@@ -103,10 +89,10 @@ const App = () => {
       setBlogs(blogs
         .concat(returned)
         .sort(function (a, b) { return b.likes - a.likes }))
-      doMessaging(`Successfully added new blog: ${blogObject.title} by ${blogObject.author}`)
+      dispatch(createNotification(`Successfully added new blog: ${blogObject.title} by ${blogObject.author}`, 5))
     } catch (error) {
       console.log(error)
-      doErroring('Could not add new blog.')
+      dispatch(createNotification('Could not add new blog.', 5))
     }
   }
 
@@ -114,28 +100,27 @@ const App = () => {
     try {
       await blogService.remove(id)
       setBlogs(blogs.filter(blog => id.toString() !== blog.id.toString()))
-      doMessaging('Removed blog successfully.')
+      dispatch(createNotification('Removed blog successfully.', 5))
     } catch (error) {
       console.log(error)
-      doErroring('Could not remove blog.')
+      dispatch(createNotification('Could not remove blog.', 5))
     }
   }
 
   const likeBlog = async (id, blogObject) => {
     try {
       await blogService.update(id, blogObject)
-      doMessaging(`Successfully liked blog: ${blogObject.title} by ${blogObject.author}`)
+      dispatch(createNotification(`Successfully liked blog: ${blogObject.title} by ${blogObject.author}`))
       const allBlogs = await blogService.getAll()
       setBlogs(allBlogs.sort(function (a, b) { return b.likes - a.likes }))
     } catch (error) {
-      doErroring('Could not like blog.')
+      dispatch(createNotification('Could not like blog.'))
     }
   }
 
   return (
     <div>
-      <Notification message={message} />
-      <Error message={errorMessage} />
+      <Notification />
       {user === null ?
         <LoginForm handleLogin={handleLogin}
           username={username}
