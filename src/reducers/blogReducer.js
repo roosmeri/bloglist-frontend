@@ -23,6 +23,8 @@ const blogReducer = (state = [], action) => {
       return sort(action.data)
     case 'NEW_BLOG':
       return sort([...state, action.data])
+    case 'DELETE':
+      return sort(action.data)
     case 'LIKE':
       return sort(action.data)
     default:
@@ -36,6 +38,18 @@ export const createBlog = (content) => {
     dispatch({
       type: 'NEW_BLOG',
       data: newBlog
+    })
+  }
+}
+
+
+export const deleteBlog = (id) => {
+  return async dispatch => {
+    await blogService.remove(id)
+    const blogs = await blogService.getAll()
+    dispatch({
+      type: 'DELETE',
+      data: blogs
     })
   }
 }

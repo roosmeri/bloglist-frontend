@@ -1,7 +1,10 @@
 import React, { useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { likeBlog, deleteBlog } from '../reducers/blogReducer'
 
-const Blog = ({ user, blog, likeBlog, deleteBlog }) => {
+const Blog = ({ user, blog }) => {
   const [showAll, setShowAll] = useState(false)
+  const dispatch = useDispatch()
 
   const toggleView = () => {
     setShowAll(!showAll)    
@@ -25,21 +28,12 @@ const Blog = ({ user, blog, likeBlog, deleteBlog }) => {
   }
 
   const like = (event) => {
-    const blogObject = {
-      user: blog.user.id,
-      title: blog.title,
-      author: blog.author,
-      url: blog.url,
-      likes: blog.likes + 1
-    }
-
-    likeBlog(blog.id, blogObject)
+    dispatch(likeBlog(blog.id, blog))
   }
 
   const remove = (event) => {
     window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)
-
-    deleteBlog(blog.id)
+    dispatch(deleteBlog(blog.id))
   }
 
   const blogStyle = {
