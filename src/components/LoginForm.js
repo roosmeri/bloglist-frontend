@@ -1,19 +1,26 @@
 
 import React from 'react'
+import { useDispatch } from 'react-redux'
+import { login } from '../reducers/loginReducer'
 
-const LoginForm = ({ handleLogin, username, password, handleUsernameChange,
-  handlePasswordChange }) => (
+const LoginForm = () => {
+  const dispatch = useDispatch()
+
+  const onSubmit = (event) => {
+    event.preventDefault()
+    dispatch(login(event.target.Username.value, event.target.Password.value))
+  }
+
+  return (
     <div>
       <h2>Login</h2>
-      <form onSubmit={handleLogin}>
+      <form onSubmit={onSubmit}>
         <div>
           username
         <input
             id='username'
             type="text"
-            value={username}
             name="Username"
-            onChange={handleUsernameChange}
           />
         </div>
         <div>
@@ -21,15 +28,14 @@ const LoginForm = ({ handleLogin, username, password, handleUsernameChange,
         <input
             id='password'
             type="password"
-            value={password}
             name="Password"
-            onChange={handlePasswordChange}
           />
         </div>
         <button id='login-button' type="submit">login</button>
       </form>
     </div>
   )
+}
 
 
 export default LoginForm
