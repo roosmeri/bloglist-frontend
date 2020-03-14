@@ -7,15 +7,23 @@ import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import BlogForm from './components/BlogForm'
 import { createNotification } from './reducers/notificationReducer'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { initializeBlogs } from './reducers/blogReducer'
+
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
+  const blogs = useSelector(state => {
+    return state.blogs
+  })
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [visible, setVisible] = useState(false)
   const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(initializeBlogs())
+  }, [dispatch])
 
   const hideWhenVisible = { display: visible ? 'none' : '' }
   const showWhenVisible = { display: visible ? '' : 'none' }
@@ -23,13 +31,6 @@ const App = () => {
   const toggleVisibility = () => {
     setVisible(!visible)
   }
-
-  useEffect(() => {
-    blogService.getAll().then(blogs => {
-      setBlogs(blogs.sort(function (a, b) { return b.likes - a.likes }))
-    }
-    )
-  }, [])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -83,23 +84,10 @@ const App = () => {
     setUser(null)
   }
 
-  const createBlog = async (blogObject) => {
-    try {
-      const returned = await blogService.create(blogObject)
-      setBlogs(blogs
-        .concat(returned)
-        .sort(function (a, b) { return b.likes - a.likes }))
-      dispatch(createNotification(`Successfully added new blog: ${blogObject.title} by ${blogObject.author}`, 5))
-    } catch (error) {
-      console.log(error)
-      dispatch(createNotification('Could not add new blog.', 5))
-    }
-  }
-
   const deleteBlog = async (id) => {
     try {
       await blogService.remove(id)
-      setBlogs(blogs.filter(blog => id.toString() !== blog.id.toString()))
+      dispatch(deleteBlog(id))
       dispatch(createNotification('Removed blog successfully.', 5))
     } catch (error) {
       console.log(error)
@@ -109,10 +97,8 @@ const App = () => {
 
   const likeBlog = async (id, blogObject) => {
     try {
-      await blogService.update(id, blogObject)
+      dispatch(likeBlog(id,blogObject))
       dispatch(createNotification(`Successfully liked blog: ${blogObject.title} by ${blogObject.author}`))
-      const allBlogs = await blogService.getAll()
-      setBlogs(allBlogs.sort(function (a, b) { return b.likes - a.likes }))
     } catch (error) {
       dispatch(createNotification('Could not like blog.'))
     }
@@ -138,8 +124,7 @@ const App = () => {
             showWhenVisible={showWhenVisible}
           >
             <h2>create new</h2>
-            <BlogForm createBlog={createBlog}
-              toggleVisibility={toggleVisibility} />
+            <BlogForm toggleVisibility={toggleVisibility} />
           </Togglable>
           <p>{user.name} logged in <button onClick={handleLogout}>Logout</button></p>
           {blogsDiv()}
