@@ -1,4 +1,6 @@
 import blogService from '../services/blogs'
+import { initializeUsers } from './userReducer'
+import { createNotification } from './notificationReducer'
 
 const sort = (state) => {
   return state
@@ -39,6 +41,8 @@ export const createBlog = (content) => {
       type: 'NEW_BLOG',
       data: newBlog
     })
+    dispatch(initializeUsers())
+    dispatch(createNotification('Well created',5))
   }
 }
 
@@ -51,6 +55,8 @@ export const deleteBlog = (id) => {
       type: 'DELETE',
       data: blogs
     })
+    dispatch(initializeUsers())
+    dispatch(createNotification('Deleted',5))
   }
 }
 

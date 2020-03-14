@@ -1,8 +1,9 @@
 import loginService from '../services/login'
 import blogService from '../services/blogs'
 import { createNotification } from './notificationReducer'
+import storage from '../utils/storage'
 
-const loginReducer = (state = null, action) => {
+const loginReducer = (state = storage.loadUser(), action) => {
   console.log('state now: ', state)
   console.log('action', action)
 
@@ -25,6 +26,7 @@ export const login = (username, password) => {
       })
 
       blogService.setToken(user.token)
+      storage.saveUser(user)
       dispatch({
         type: 'LOGIN',
         data: user
@@ -40,6 +42,7 @@ export const login = (username, password) => {
 export const logout = () => {
   return dispatch => {
     blogService.setToken(null)
+    storage.logoutUser()
     dispatch({
       type: 'LOGOUT'
     })

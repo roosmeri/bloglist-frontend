@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { likeBlog, deleteBlog } from '../reducers/blogReducer'
+import { initializeUsers } from '../reducers/userReducer'
 
 const Blog = ({ user, blog }) => {
   const [showAll, setShowAll] = useState(false)
@@ -34,6 +35,7 @@ const Blog = ({ user, blog }) => {
   const remove = (event) => {
     window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)
     dispatch(deleteBlog(blog.id))
+    dispatch(initializeUsers())
   }
 
   const blogStyle = {

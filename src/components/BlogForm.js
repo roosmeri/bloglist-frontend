@@ -6,6 +6,7 @@ import {
   createNotification
 } from '../reducers/notificationReducer'
 import { useDispatch } from 'react-redux'
+import { initializeUsers } from '../reducers/userReducer'
 
 const BlogForm = ({
   toggleVisibility
@@ -23,7 +24,6 @@ const BlogForm = ({
     event.target.author.value = ''
     event.target.author.value = ''
     dispatch(createBlog(blogObject))
-    dispatch(createNotification('Well created'))
   }
 
   return (
